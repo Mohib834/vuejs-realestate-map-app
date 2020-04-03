@@ -1,7 +1,7 @@
-import main from './modules/main'
 import { createDirectStore } from 'direct-vuex'
 import Vue from 'vue'
 import Vuex from 'vuex'
+import main from './modules/main'
 
 Vue.use(Vuex)
 

@@ -1,28 +1,39 @@
 <template>
   <v-autocomplete
-    v-model="location"
+    class="autocomplete"
+    prepend-inner-icon="mdi-magnify"
     :search-input.sync="search"
     :items="searchItems"
     :loading="loading"
     hide-no-data=""
+    flat=""
+    dark=""
+    solo-inverted=""
+    background-color="primary"
+    color="#fff"
+    style="color:#fff"
+    @change="storeSelectedLocation"
   />
 </template>
 
 <script lang="ts">
 import { Vue, Component, Watch } from 'nuxt-property-decorator'
 import axios from 'axios'
+import { store } from '../store'
 
 @Component
 export default class autocomplete extends Vue {
-    location = '';
     searchItems = [];
     search = null;
     loading = false;
 
     @Watch('search')
     handler (v:string) {
+      if (v.length === 0 || v === null) {
+        this.searchItems = []
+      }
       // Items have already been loaded
-      if (this.searchItems.length > 0) { return }
+      if (this.searchItems.length > 0 || v.length === 0) { return }
 
       // Items have already been requested
       if (this.loading) { return }
@@ -51,5 +62,22 @@ export default class autocomplete extends Vue {
         })
         .finally(() => (this.loading = false))
     }
+
+    storeSelectedLocation (data: string) {
+      store.commit.SET_SELECTED_LOCATION(data)
+      this.$emit('locationSelected')
+    }
 }
 </script>
+
+<style lang="scss">
+.autocomplete {
+  .v-input__slot{
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  .v-select__slot input {
+    color: #fff !important;
+  }
+}
+</style>
