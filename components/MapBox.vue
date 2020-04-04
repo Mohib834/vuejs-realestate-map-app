@@ -96,7 +96,8 @@ export default class Index extends Vue {
         const el = document.createElement('div')
         el.className = 'marker'
         // @ts-ignore
-        el.innerHTML = `<div style="position:relative"><div class="price">${this.properties![idx].price.split('+')[0]}</div><div class="shape"></div></div>`
+        const propertyPrice = this.properties![idx].price.includes('+') ? this.properties![idx].price.split('+')[0] : this.properties![idx].price.split('/')[0]
+        el.innerHTML = `<div style="position:relative"><div class="price">${propertyPrice}</div><div class="shape"></div></div>`
 
         // make a marker for each feature and add to the map
         new mapboxgl.Marker(el)

@@ -35,11 +35,11 @@ export default class autocomplete extends Vue {
 
     @Watch('search')
     handler (v:string) {
-      if (v.length === 0 || v === null) {
+      if (!v) {
         this.searchItems = []
       }
       // Items have already been loaded
-      if (this.searchItems.length > 0 || v.length === 0) { return }
+      if (this.searchItems.length > 0 || !v) { return }
 
       // Items have already been requested
       if (this.loading) { return }
@@ -88,6 +88,10 @@ export default class autocomplete extends Vue {
 
   i{
     margin-top:2px !important;
+  }
+
+  input::placeholder {
+    color:rgba(255,255,255,.5) !important;
   }
 }
 </style>

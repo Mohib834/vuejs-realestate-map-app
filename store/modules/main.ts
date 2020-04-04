@@ -55,7 +55,7 @@ const main = defineModule({
         city: getters.selectedLocation.split(', ')[0],
         state_code: getters.selectedLocation.split(', ')[1],
         radius: 10,
-        limit: 40,
+        limit: 90,
         price_min: 300,
         beds_min: 1,
         baths_min: 1

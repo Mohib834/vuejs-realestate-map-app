@@ -9,8 +9,14 @@
       class="mb-4"
       @locationSelected="getProperties"
     />
-
     <Filters />
+    <p
+      v-if="properties"
+      class="caption px-5 mb-0"
+      style="font-size:13px !important;"
+    >
+      Showing {{ properties.length }} results
+    </p>
 
     <template v-if="!properties">
       <v-img
@@ -55,7 +61,7 @@
     >
       <v-list-item-group
         style="height:575px"
-        class="properties"
+        class="properties pb-10"
         :style="properties && 'overflow-y: scroll;'"
       >
         <v-list-item
@@ -123,7 +129,7 @@
               {{ property.address }}
             </p>
             <p class="title font-weight-bold">
-              {{ property.price.split('+')[0] }}
+              {{ property.price.includes('+') ? property.price.split('+')[0] : property.price.split('/')[0] }}
             </p>
           </v-sheet>
         </v-list-item>
