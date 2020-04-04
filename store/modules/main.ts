@@ -5,12 +5,14 @@ import { moduleActionContext } from '../index'
 type State = {
   selectedLocation: string;
   fetchedProperties: null | Array<{}>;
+  loadingProperties: boolean;
 }
 
 const main = defineModule({
   state: (): State => ({
     selectedLocation: '',
-    fetchedProperties: null
+    fetchedProperties: null,
+    loadingProperties: false
   }),
   getters: {
     selectedLocation (state:State) {
@@ -18,6 +20,9 @@ const main = defineModule({
     },
     fetchedProperties (state: State) {
       return state.fetchedProperties
+    },
+    loadingProperties (state: State) {
+      return state.loadingProperties
     }
   },
   mutations: {
@@ -26,20 +31,47 @@ const main = defineModule({
     },
     SET_FETCHED_PROPERTIES (state:State, payload: Array<{}>) {
       state.fetchedProperties = payload
+    },
+    SET_LOADING_PROPERTIES_STATUS (state:State, payload: boolean) {
+      state.loadingProperties = payload
     }
   },
   actions: {
-    fetchProperties (context): Promise<Array<any>> {
+    fetchProperties (context, payload?: {
+      price?: {
+        min: number;
+        max?: number;
+      };
+      accomodities?: {
+        minBeds: number,
+        minBaths: number,
+      }
+    }): Promise<Array<any>> {
       const { getters, commit } = modActionContext(context)
+
+      commit.SET_FETCHED_PROPERTIES([])
+
       const params = {
         city: getters.selectedLocation.split(', ')[0],
         state_code: getters.selectedLocation.split(', ')[1],
         radius: 10,
-        limit: 3
+        limit: 40,
+        price_min: 300,
+        beds_min: 1,
+        baths_min: 1
+      } as {[key: string]: any}
+
+      if (payload) {
+        params.price_min = payload.price?.min
+        params.price_max = payload.price?.max
+        params.beds_min = payload.accomodities?.minBeds
+        params.baths_min = payload.accomodities?.minBaths
       }
 
+      commit.SET_LOADING_PROPERTIES_STATUS(true)
+
       return new Promise((resolve, reject) => {
-        axios.get('https://realtor.p.rapidapi.com/properties/list-for-sale', {
+        axios.get('https://realtor.p.rapidapi.com/properties/list-for-rent', {
           params,
           headers: {
             'x-rapidapi-host': 'realtor.p.rapidapi.com',
@@ -48,10 +80,11 @@ const main = defineModule({
         })
           .then((res) => {
             commit.SET_FETCHED_PROPERTIES(res.data.listings)
-            console.log(res.data.listings)
+            commit.SET_LOADING_PROPERTIES_STATUS(false)
             resolve()
           })
           .catch((err) => {
+            commit.SET_LOADING_PROPERTIES_STATUS(false)
             console.log(err)
             reject(err)
           })

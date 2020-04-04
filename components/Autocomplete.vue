@@ -1,19 +1,25 @@
 <template>
-  <v-autocomplete
-    class="autocomplete"
-    prepend-inner-icon="mdi-magnify"
-    :search-input.sync="search"
-    :items="searchItems"
-    :loading="loading"
-    hide-no-data=""
-    flat=""
-    dark=""
-    solo-inverted=""
-    background-color="primary"
-    color="#fff"
-    style="color:#fff"
-    @change="storeSelectedLocation"
-  />
+  <v-toolbar
+    color="primary"
+  >
+    <v-autocomplete
+      class="autocomplete"
+      prepend-inner-icon="mdi-magnify"
+      :search-input.sync="search"
+      :items="searchItems"
+      :loading="loading"
+      hide-no-data=""
+      flat=""
+      dark=""
+      background-color="rgba(255,255,255,.1)"
+      solo-inverted=""
+      placeholder="Search city"
+      color="#fff"
+      dense=""
+      style="color:#fff; top:15px"
+      @change="storeSelectedLocation"
+    />
+  </v-toolbar>
 </template>
 
 <script lang="ts">
@@ -78,6 +84,10 @@ export default class autocomplete extends Vue {
   }
   .v-select__slot input {
     color: #fff !important;
+  }
+
+  i{
+    margin-top:2px !important;
   }
 }
 </style>

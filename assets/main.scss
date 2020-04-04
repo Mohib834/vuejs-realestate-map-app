@@ -1,0 +1,32 @@
+
+  .marker{
+    width:100px;
+    height:100px;
+    .price{
+      background: #5e4da9;
+      display:inline-block;
+      padding: 9px 10px;
+      border-radius:4px;
+      color:#fff;
+      font-size: 15px;
+      font-weight:bold;
+      letter-spacing: 1px;
+      box-shadow: 0 5px 5px rgba(0,0,0,.2);
+      transform:translateX(-50%);
+      left:50%;
+      position: absolute;
+      top:-32px;
+    }
+    
+    .shape{
+      position:absolute;
+      box-shadow: 0 5px 5px rgba(0,0,0,.2);
+      bottom:-15px;
+      left:50%;
+      transform:translateX(-50%);
+      background:#5e4da9;
+      height: 16px;
+      width:26px;
+      clip-path: polygon(0 0, 50% 100%, 100% 0);
+    }
+  }

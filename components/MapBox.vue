@@ -12,6 +12,7 @@
 <script lang="ts">
 import { Vue, Component } from 'nuxt-property-decorator'
 import { store } from '../store'
+
 let mapboxgl:any
 if (process.client) {
   mapboxgl = require('mapbox-gl/dist/mapbox-gl.js')
@@ -24,7 +25,8 @@ if (process.client) {
 })
 export default class Index extends Vue {
     accessToken = 'pk.eyJ1IjoibW9oaWI2NjQ0IiwiYSI6ImNrN3llMnY1NzA1b2szb213Z2hndmhybzAifQ.qioZ5_Cu7zc4Xwc6hd6LrQ';
-    map = {};
+    map = {} as {[key:string]: any}
+    flying = false;
 
     get properties () {
       return store.getters.fetchedProperties
@@ -47,15 +49,15 @@ export default class Index extends Vue {
     }
 
     flyLocation (payload: Array<number>) {
-      // @ts-ignore
       this.map.flyTo({
         center: payload,
-        essential: true // this animation is considered essential with respect to prefers-reduced-motion
+        essential: true, // this animation is considered essential with respect to prefers-reduced-motion
+        zoom: 15
       })
+      this.map.fire('flystart')
     }
 
     addLocationMarker () {
-      console.log('triggered location marker')
       // # Setting the markers on the searched locations on the map
 
       // Creating a geojson object of the property locations
@@ -83,22 +85,35 @@ export default class Index extends Vue {
           },
           properties: {
             title: 'Mapbox',
-            description: p.address_new.line
+            description: p.address
           }
         })
       })
 
       // Setting the marker on the map with the help of geojson object.
-      geojson.features.forEach((marker) => {
+      geojson.features.forEach((marker, idx) => {
         // create a HTML element for each feature
         const el = document.createElement('div')
         el.className = 'marker'
+        // @ts-ignore
+        el.innerHTML = `<div style="position:relative"><div class="price">${this.properties![idx].price.split('+')[0]}</div><div class="shape"></div></div>`
 
         // make a marker for each feature and add to the map
         new mapboxgl.Marker(el)
           .setLngLat(marker.geometry.coordinates)
           .addTo(this.map)
       })
+
+      // Checking if the flying ended or not.
+      this.map.on('moveend', () => {
+        if (this.flying) {
+          // tooltip or overlay here
+          // if ended trigger odometer from 0 to value
+
+        }
+      })
+      this.map.on('flystart', () => (this.flying = true))
+      this.map.on('flyend', () => (this.flying = false))
     }
 }
 </script>
@@ -106,12 +121,5 @@ export default class Index extends Vue {
 #map{
   height: 100vh;
   width: 100vw;
-}
-.marker {
-  background:red;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  cursor: pointer;
 }
 </style>
