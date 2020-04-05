@@ -59,6 +59,9 @@ typings/
 # dotenv environment variables file
 .env
 
+# firebase functions config
+.runtimeconfig.json
+
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 

@@ -115,7 +115,7 @@ const main = defineModule({
           params,
           headers: {
             'x-rapidapi-host': 'realtor.p.rapidapi.com',
-            'x-rapidapi-key': process.env.rapidApi
+            'x-rapidapi-key': process.env.rapidApiKey
           }
         })
           .then((res) => {

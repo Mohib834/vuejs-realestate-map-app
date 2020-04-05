@@ -24,7 +24,7 @@ if (process.client) {
   }
 })
 export default class Index extends Vue {
-    accessToken = 'pk.eyJ1IjoibW9oaWI2NjQ0IiwiYSI6ImNrN3llMnY1NzA1b2szb213Z2hndmhybzAifQ.qioZ5_Cu7zc4Xwc6hd6LrQ';
+    accessToken = process.env.mapboxApiKey;
     map = {} as {[key:string]: any}
     flying = false;
 

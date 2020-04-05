@@ -1,3 +1,8 @@
+import * as functions from 'firebase-functions'
+import * as admin from 'firebase-admin'
+import 'firebase-functions'
+admin.initializeApp()
+
 require('dotenv').config()
 
 export default {
@@ -58,7 +63,8 @@ export default {
   ],
 
   env: {
-    rapidApi: process.env.NUXT_ENV_RAPID_API_KEY
+    rapidApiKey: process.env.NUXT_ENV_RAPID_API_KEY || functions.config().rapidapi.key,
+    mapboxApiKey: process.env.NUXT_ENV_MAPBOX_API_KEY || functions.config().mapboxapi.key
   },
 
   pwa: {
