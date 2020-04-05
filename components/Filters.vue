@@ -19,8 +19,8 @@
           style="text-transform: initial"
           class="mr-2 ml-1"
           color="primary"
-          dark=""
-          append=""
+          :elevation="properties && 2"
+          :disabled="!properties"
           v-on="on"
           @click="roomsMenu = false"
         >
@@ -104,7 +104,8 @@
           height="30px"
           style="text-transform: initial"
           color="primary"
-          elevation="2"
+          :elevation="properties && 2"
+          :disabled="!properties"
           v-on="on"
           @click="priceMenu = false"
         >
@@ -226,6 +227,10 @@ export default class Filters extends Vue {
 
   get loadingProperties () {
     return store.getters.loadingProperties
+  }
+
+  get properties () {
+    return store.getters.fetchedProperties
   }
 
   setFilter () {
