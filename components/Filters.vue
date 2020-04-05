@@ -202,6 +202,14 @@
         </v-card-actions>
       </v-card>
     </v-menu>
+    <v-progress-circular
+      v-if="loadingProperties"
+      indeterminate
+      color="primary"
+      size="18"
+      class="ml-auto"
+      width="2"
+    />
   </v-sheet>
 </template>
 
@@ -216,6 +224,10 @@ export default class Filters extends Vue {
   priceMenu = false;
   roomsMenu = false;
 
+  get loadingProperties () {
+    return store.getters.loadingProperties
+  }
+
   setFilter () {
     this.priceMenu = false
     this.roomsMenu = false
@@ -223,16 +235,18 @@ export default class Filters extends Vue {
     const minPrice = this.range[0]
     const maxPrice = this.range[1]
 
-    store.dispatch.fetchProperties({
+    store.commit.SET_FILTERS({
       price: {
         min: minPrice,
         max: maxPrice === 3500 ? undefined : maxPrice
       },
       accomodities: {
-        minBeds: this.bedrooms,
-        minBaths: this.bathrooms
+        beds: this.bedrooms, // min
+        baths: this.bathrooms // min
       }
     })
+
+    this.$emit('filterApplied')
   }
 }
 </script>

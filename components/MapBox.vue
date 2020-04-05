@@ -42,8 +42,8 @@ export default class Index extends Vue {
       // initializing the Map
       this.map = new mapboxgl.Map({
         container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v9',
-        center: [-78.951827, 33.628695],
+        style: 'mapbox://styles/mohib6644/ck8mwus9w21t31inxb3qtcdsm?optimize=true',
+        center: [-74.0066, 40.7135],
         zoom: 13
       })
     }
@@ -54,7 +54,6 @@ export default class Index extends Vue {
         essential: true, // this animation is considered essential with respect to prefers-reduced-motion
         zoom: 15
       })
-      this.map.fire('flystart')
     }
 
     addLocationMarker () {
@@ -104,17 +103,6 @@ export default class Index extends Vue {
           .setLngLat(marker.geometry.coordinates)
           .addTo(this.map)
       })
-
-      // Checking if the flying ended or not.
-      this.map.on('moveend', () => {
-        if (this.flying) {
-          // tooltip or overlay here
-          // if ended trigger odometer from 0 to value
-
-        }
-      })
-      this.map.on('flystart', () => (this.flying = true))
-      this.map.on('flyend', () => (this.flying = false))
     }
 }
 </script>

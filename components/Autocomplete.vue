@@ -52,7 +52,7 @@ export default class autocomplete extends Vue {
         },
         headers: {
           'x-rapidapi-host': 'realtor.p.rapidapi.com',
-          'x-rapidapi-key': 'd7a73d6dd8msh29a06dcb77bd699p18e444jsn45f9a3b34ad4'
+          'x-rapidapi-key': process.env.rapidApi
         }
       }).then((res) => {
         this.searchItems = res.data.autocomplete.map((item:any) => {
@@ -60,7 +60,6 @@ export default class autocomplete extends Vue {
         })
 
         this.loading = false
-        console.log(res)
       })
         .catch((err) => {
           console.log(err)

@@ -9,7 +9,9 @@
       class="mb-4"
       @locationSelected="getProperties"
     />
-    <Filters />
+    <Filters
+      @filterApplied="getProperties"
+    />
     <p
       v-if="properties"
       class="caption px-5 mb-0"
@@ -38,7 +40,7 @@
         Search city to get the property listings
       </v-sheet>
     </template>
-    <template v-if="loadingProperties">
+    <template v-if="loadingProperties && !loadingMoreProperties">
       <v-sheet
         v-for="n in 3"
         :key="n"
@@ -60,13 +62,14 @@
       v-else
     >
       <v-list-item-group
-        style="height:575px"
-        class="properties pb-10"
+        ref="propertiesContainer"
+        style="height:522px"
+        class="properties pb-2"
         :style="properties && 'overflow-y: scroll;'"
       >
         <v-list-item
-          v-for="property in properties"
-          :key="property.property_id"
+          v-for="(property, i) in properties"
+          :key="i"
           color="primary"
           flat=""
           class="py-5 px-5 d-flex align-center"
@@ -90,6 +93,7 @@
                 >
                   <v-progress-circular
                     width="2"
+                    size="20"
                     indeterminate
                     color="primary"
                   />
@@ -99,7 +103,7 @@
             <v-img
               v-else
               class="mr-5"
-              :src="require('@/assets/no-image.jpg')"
+              :src="require('@/assets/no-image.png')"
               width="120px"
               height="120px"
               style="border-radius:3px"
@@ -112,6 +116,7 @@
                 >
                   <v-progress-circular
                     width="2"
+                    size="20"
                     indeterminate
                     color="primary"
                   />
@@ -139,7 +144,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'nuxt-property-decorator'
+import { Vue, Component, Ref } from 'nuxt-property-decorator'
 import { store } from '../store'
 
 @Component({
@@ -149,6 +154,10 @@ import { store } from '../store'
   }
 })
 export default class PropertyListings extends Vue {
+  loadingMoreProperties = false;
+
+  @Ref('propertiesContainer') propertiesContainer!: any;
+
   get loadingProperties () {
     return store.getters.loadingProperties
   }
@@ -157,15 +166,49 @@ export default class PropertyListings extends Vue {
     return store.getters.fetchedProperties
   }
 
-  getProperties () {
-    store.dispatch
-      .fetchProperties(undefined)
-      .then(() => {
-        this.$emit('emitPlaceMarker')
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+  mounted () {
+    this.scrollFetch()
+  }
+
+  scrollFetch () {
+    const propertiesContainer = this.propertiesContainer.$el
+
+    propertiesContainer.onscroll = () => {
+      let bottom = false
+      const containerScrollHeight = propertiesContainer.scrollHeight
+      const scrollPosition = Math.ceil(propertiesContainer.scrollTop + propertiesContainer.offsetHeight)
+
+      bottom = containerScrollHeight === scrollPosition
+      if (bottom) {
+        this.loadingMoreProperties = true
+        let currentPage = store.getters.page
+        currentPage++
+        store.commit.SET_PAGE(currentPage)
+        this.getProperties({ page: currentPage })
+          .then(() => {
+            this.loadingMoreProperties = false
+          })
+          .catch(() => {
+            this.loadingMoreProperties = false
+          })
+      }
+    }
+  }
+
+  getProperties (payload: {page: number} | undefined = undefined) {
+    return new Promise((resolve, reject) => {
+      store.dispatch
+        .fetchProperties(payload)
+        .then(() => {
+          this.$emit('emitPlaceMarker')
+          this.scrollFetch()
+          resolve()
+        })
+        .catch((err) => {
+          console.log(err)
+          reject(err)
+        })
+    })
   }
 
   goToLocation (value: Array<number>) {
